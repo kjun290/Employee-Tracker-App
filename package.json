@@ -1,0 +1,27 @@
+{
+  "name": "employee-tracker-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^8.0.0",
+    "mysql": "^2.18.1",
+    "start": "^5.1.0",
+    "util": "^0.12.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kjun290/Employee-Tracker-App.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kjun290/Employee-Tracker-App/issues"
+  },
+  "homepage": "https://github.com/kjun290/Employee-Tracker-App#readme"
+}
