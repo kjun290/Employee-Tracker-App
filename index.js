@@ -13,12 +13,13 @@ console.log("My app is running")
 const viewEmployees = async () => {
     let allEmployees = await db.selectAllEmployees()
     console.table(allEmployees)
+    mainMenu()
 }
 
 const mainMenu = () => {
     inquirer
     .prompt({
-        name: "action",
+        name: "choice",
         type: "list",
         message: "What would you like to do",
         choices: [
@@ -34,7 +35,7 @@ const mainMenu = () => {
     })
 
     .then((answer) => {
-        switch (answer.action) {
+        switch (answer.choice) {
             case "add a department":
                 addDepartment();
                 break;
@@ -72,7 +73,7 @@ const addDepartment = () => {
     })
 
     .then ((answer) => {
-        const department = {
+        let department = {
             departmentName: answer.addDepartment
         }
         DB.addDepartment(department).then(Response => {
@@ -83,7 +84,7 @@ const addDepartment = () => {
 };
 
 const addRole = async () => {
-    let viewDepartment = await db.viewDepartment();
+    let viewDepartment = await db.addRole();
     let departmentList = viewDepartment.map(({id, name}) => ({name: name, value: id}))
 
 
@@ -114,7 +115,7 @@ const addRole = async () => {
     ])
 
     .then (answer => {
-        const role = {
+        let role = {
             title: answer.title,
             salary: answer.salary ||0,
             department_id: answer.department
@@ -128,9 +129,61 @@ const addRole = async () => {
 
 
 const addEmployee = () => {
-
+    let role = await DB.viewRoles();
+    let allRoles = role.map(({title, id}) => ({name:title, value: id}))
 };
+    let employees = await DB.viewEmployees();
+    console.log (employees);
+    const managers = employees.map(({first_name, last_name, id}) => ({
+        name: first_name + last_name,
+        value: id 
+    }))
 
+    inquirer
+    .prompt([
+       {
+           name: "first_name",
+           type: "input",
+           message: "What is the first name?"
+       },
+
+       {
+           name: "last_name",
+           type: "input",
+           message: "what is the last name"
+       },
+
+       {
+           name: "role_id",
+           type: "rawlist",
+           message: "what role is the role",
+           choices: allRoles
+       },
+
+       {
+           name: "manager_id",
+           type: "rawlist",
+           message: "who is the manager",
+           choices: managers
+       },
+
+
+    ])
+
+    .then(answer => {
+        console.log(answer)
+        let newEmployee = {
+            first_name: answer.first_name,
+            last_name: answer.last_name,
+            role_id: answer.role_id,
+            managers_id: answer.managers_id
+        }
+
+        DB.addEmployee(newEmployee).then(response => {
+            console.table(response)
+            viewEmployees
+        })
+    }) 
 
 const viewDepartment = () => {
     DB.viewDepartment().then(response => {
