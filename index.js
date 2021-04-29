@@ -1,14 +1,16 @@
 const db = require("./db");
 require("console.table");
 const inquirer = require("inquirer");
-const { connection } = require("./db");
+const mysql = require("mysql");
+const util = require("util");
+const { connection, viewDepartment, viewRoles } = require("./db");
 
 
 console.log("My app is running")
 
 
 
-async function viewEmployees() {
+const viewEmployees = async () => {
     let allEmployees = await db.selectAllEmployees()
     console.table(allEmployees)
 }
@@ -20,14 +22,14 @@ const mainMenu = () => {
         type: "list",
         message: "What would you like to do",
         choices: [
-            "add a department",
-          "add a role", 
-          "add an employee", 
-          "view departments", 
-          "view roles", 
-          "view an employee", 
-          "update employee's role",
-           "exit"
+        "add a department",
+        "add a role", 
+        "add an employee", 
+        "view departments", 
+        "view roles", 
+        "view an employee", 
+        "update employee's role",
+        "exit"
         ]
     })
 
@@ -73,29 +75,81 @@ const addDepartment = () => {
         const department = {
             departmentName: answer.addDepartment
         }
-        db.addDepartment(department).then(res => {
-            console.table(res)
+        DB.addDepartment(department).then(Response => {
+            console.table(Response)
+            viewDepartment()
         })
     })
-}
+};
 
-async function addRole() {
-    let viewDepartment = await db.viewDepartment()
-    console.table(viewDepartment)
+const addRole = async () => {
+    let viewDepartment = await db.viewDepartment();
+    let departmentList = viewDepartment.map(({id, name}) => ({name: name, value: id}))
 
-}
+
 
     inquirer
     .prompt([
         {
-            name:"role",
+            name: "title",
             type: "input",
             message: "What role would you like to add?"
 
-        }
+        },
 
-        
+        {
+            name: "salary",
+            type: "input",
+            message: "What is the salary for this role?"
+        },
+
+        {
+            name: "department",
+            type: "rawlist",
+            message: "What is the department id?",
+            choices: departmentList
+
+            
+        }
     ])
 
+    .then (answer => {
+        const role = {
+            title: answer.title,
+            salary: answer.salary ||0,
+            department_id: answer.department
+        }
+        DB.addRole(role).then(response=> {
+            console.table (response)
+            viewRoles()
+        })
+    })
+};
+
+
+const addEmployee = () => {
+
+};
+
+
+const viewDepartment = () => {
+    DB.viewDepartment().then(response => {
+        console.table(response)
+        mainMenu()
+    })
+};
+
+const viewRoles = () => {
+    DB.viewRoles().then(response => {
+        console.table(response)
+        mainMenu()
+    })
+}
+
+const updateEmployee = async () => {
+    let viewEmployees = await db.viewEmployees();
+    let allEmployees = viewEmployees.map(({id, name}) => ({name: name, value: id}))
+
+}
 viewEmployees();
 mainMenu()
