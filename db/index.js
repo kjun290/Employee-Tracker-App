@@ -5,12 +5,6 @@ class DB {
         this.connection = connection
     }
 
-    selectAllEmployees() {
-        return this.connection.query(
-        "SELECT * from employee"
-        )
-    };
-
     addDepartment(department) {
         return this.connection.query(
             "INSERT INTO department SET ?", department
@@ -37,7 +31,7 @@ class DB {
 
     viewRoles() {
         return this.connection.query(
-            "SELECT * FROM roles"
+            "SELECT * FROM role"
         )
     };
     
