@@ -205,18 +205,18 @@ const viewEmployees = async () => {
 }
 
 const updateEmployee = async () => {
-    let employees = await db.viewEmployees();
-    let employeeLastName = employees.map(({id, last_name}) => ({
-        name: last_name,
+    let employees = await db.viewEmployee();
+    let employeeFullName = employees.map(({id, first_name, last_name}) => ({
+        name: first_name + last_name,
         value: id
     }))
+
+    let role = await db.viewRoles();
     let allRoles = role.map(({title, id}) => ({
         name: title, value: id
     }));
-    let departmentList = department.map(({id, name}) => ({
-        name: name, 
-        value: id
-    }))
+
+    
 
     inquirer
     .prompt([
@@ -224,16 +224,7 @@ const updateEmployee = async () => {
             name: "employee",
             type: "rawlist",
             message: "Who would you like to update",
-            choices: employeeLastName
-        },
-
-        {
-            name: "department",
-            type: "rawlist",
-            message: "What is the department id?",
-            choices: departmentList
-
-            
+            choices: employeeFullName
         },
 
         {
@@ -244,10 +235,12 @@ const updateEmployee = async () => {
         },
 
         {
-            name: "salary",
-            type: "input",
-            message: "what is the new salary"
-        }
+            name: "manager_id",
+            type: "rawlist",
+            message: "who is the new manager",
+            choices: employeeFullName
+        },
+
     ])
 
     .then(answer => {
@@ -255,17 +248,16 @@ const updateEmployee = async () => {
         let updateEmployee = {
             last_name: answer.last_name,
             role_id: answer.role_id,
-            salary: answer.salary ||0,
-            department_id: answer.department
+            manager_id: answer.manager_id
         }
 
-        db.addEmployee(updateEmployee).then(response => {
+        db.updateEmployee(updateEmployee).then(response => {
             console.table(response)
             viewEmployees
         })
     }) 
 
-    mainMenu()
+
 }
 
 mainMenu()

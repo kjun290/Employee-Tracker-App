@@ -43,7 +43,7 @@ class DB {
 
     updateEmployee() {
         return this.connection.query(
-            "UPDATE employee SET ? WHERE ?",
+            "UPDATE employee SET ?",
         )
     }
 
