@@ -153,7 +153,7 @@ const addEmployee = async() => {
        {
            name: "role_id",
            type: "rawlist",
-           message: "what role is the role",
+           message: "what is the role",
            choices: allRoles
        },
 
@@ -206,8 +206,15 @@ const viewEmployees = async () => {
 
 const updateEmployee = async () => {
     let employees = await db.viewEmployees();
-    let allEmployees = employees.map(({id, name}) => ({
-        name: name,
+    let employeeLastName = employees.map(({id, last_name}) => ({
+        name: last_name,
+        value: id
+    }))
+    let allRoles = role.map(({title, id}) => ({
+        name: title, value: id
+    }));
+    let departmentList = department.map(({id, name}) => ({
+        name: name, 
         value: id
     }))
 
@@ -216,10 +223,49 @@ const updateEmployee = async () => {
         {
             name: "employee",
             type: "rawlist",
-            message
+            message: "Who would you like to update",
+            choices: employeeLastName
+        },
+
+        {
+            name: "department",
+            type: "rawlist",
+            message: "What is the department id?",
+            choices: departmentList
+
+            
+        },
+
+        {
+            name: "role_id",
+            type: "rawlist",
+            message: "what is the new role",
+            choices: allRoles
+        },
+
+        {
+            name: "salary",
+            type: "input",
+            message: "what is the new salary"
         }
     ])
+
+    .then(answer => {
+        console.log(answer)
+        let updateEmployee = {
+            last_name: answer.last_name,
+            role_id: answer.role_id,
+            salary: answer.salary ||0,
+            department_id: answer.department
+        }
+
+        db.addEmployee(updateEmployee).then(response => {
+            console.table(response)
+            viewEmployees
+        })
+    }) 
+
     mainMenu()
 }
-// viewEmployees();
+
 mainMenu()

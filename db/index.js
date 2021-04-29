@@ -43,7 +43,7 @@ class DB {
 
     updateEmployee() {
         return this.connection.query(
-            "UPDATE employee SET role_id = ${res.role} WHERE id = ${res.employee}",
+            "UPDATE employee SET ? WHERE ?",
         )
     }
 
