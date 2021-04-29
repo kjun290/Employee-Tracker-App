@@ -10,12 +10,6 @@ console.log("My app is running")
 
 
 
-const viewEmployees = async () => {
-    let allEmployees = await db.viewEmployee()
-    console.table(allEmployees)
-    mainMenu()
-}
-
 const mainMenu = () => {
     inquirer
     .prompt({
@@ -85,7 +79,10 @@ const addDepartment = () => {
 
 const addRole = async () => {
     let department = await db.viewDepartment();
-    let departmentList = department.map(({id, name}) => ({name: name, value: id}))
+    let departmentList = department.map(({id, name}) => ({
+        name: name, 
+        value: id
+    }))
 
 
 
@@ -130,12 +127,12 @@ const addRole = async () => {
 
 const addEmployee = async() => {
     let role = await db.viewRoles();
-    let allRoles = role.map(({title, id}) => ({name: title, value: id}))
-
-    let employees = db.viewEmployee();
-    console.log (employees);
+    let allRoles = role.map(({title, id}) => ({
+        name: title, value: id
+    }));
+    let employees = await db.viewEmployee();
     const managers = employees.map(({first_name, last_name, id}) => ({
-        name: first_name + last_name,
+        name: first_name + last_name, 
         value: id 
     }));
 
@@ -176,7 +173,7 @@ const addEmployee = async() => {
             first_name: answer.first_name,
             last_name: answer.last_name,
             role_id: answer.role_id,
-            managers_id: answer.managers_id
+            manager_id: answer.manager_id
         }
 
         db.addEmployee(newEmployee).then(response => {
@@ -201,10 +198,28 @@ const viewRoles = () => {
     })
 }
 
-const updateEmployee = async () => {
-    let viewEmployees = await db.viewEmployees();
-    let allEmployees = viewEmployees.map(({id, name}) => ({name: name, value: id}))
+const viewEmployees = async () => {
+    let allEmployees = await db.viewEmployee()
+    console.table(allEmployees)
+    mainMenu()
+}
 
+const updateEmployee = async () => {
+    let employees = await db.viewEmployees();
+    let allEmployees = employees.map(({id, name}) => ({
+        name: name,
+        value: id
+    }))
+
+    inquirer
+    .prompt([
+        {
+            name: "employee",
+            type: "rawlist",
+            message
+        }
+    ])
+    mainMenu()
 }
 // viewEmployees();
 mainMenu()
